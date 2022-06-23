@@ -6,8 +6,10 @@ on:
       - dev
   pull_request: {}
 permissions:
+  security-events: write
   actions: write
   contents: read
+  issues: write
 
 jobs:
   lint:
@@ -128,14 +130,16 @@ jobs:
         with:
           target: "http://www.zaproxy.org"
           allow_issue_writing: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create sarif file from zaproxy results
         uses: SvanBoxel/zaproxy-to-ghas@main
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: results.sarif
+          token: ${{ secrets.GITHUB_TOKEN }}
 
 
   build:
