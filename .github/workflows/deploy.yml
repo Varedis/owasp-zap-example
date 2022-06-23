@@ -116,6 +116,28 @@ jobs:
         env:
           PORT: "8811"
 
+  zap_scan:
+    name: Scan the webapp
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.4.0
+        with:
+          target: "http://www.zaproxy.org"
+          allow_issue_writing: false
+
+      - name: Create sarif file from zaproxy results
+        uses: SvanBoxel/zaproxy-to-ghas@main
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
+
+
   build:
     name: 🐳 Build
     # only build/deploy main branch on pushes
